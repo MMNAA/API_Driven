@@ -414,6 +414,11 @@ Ce projet démontre la mise en place d’une architecture serverless pilotée pa
 
 L’utilisation de LocalStack permet de reproduire un environnement AWS complet sans dépendre du cloud réel.
 
+![start](image.png)
+![status when start](image-1.png)
+![stop](image-2.png)
+![status when stop](image-3.png)
+
 
 ---------------------------------------------------
 Evaluation
