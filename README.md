@@ -278,6 +278,118 @@ Résultat attendu
 
 ---
 
+Utilisation de l’API
+
+L’API permet de piloter dynamiquement une instance EC2 simulée via des requêtes HTTP.
+
+Démarrer l’instance
+
+Méthode POST
+
+```bash
+curl -X POST \
+http://localhost:4566/restapis/<API_ID>/dev/_user_request_/ec2 \
+-H "Content-Type: application/json" \
+-d '{"action":"start"}'
+```
+
+Méthode GET (navigateur)
+
+```text
+http://localhost:4566/restapis/<API_ID>/dev/_user_request_/ec2?action=start
+```
+
+---
+
+Arrêter l’instance
+
+POST
+
+```bash
+-d '{"action":"stop"}'
+```
+
+GET
+
+```text
+?action=stop
+```
+
+---
+
+Vérifier le statut
+
+POST
+
+```bash
+-d '{"action":"status"}'
+```
+
+GET
+
+```text
+?action=status
+```
+
+---
+
+Vérification du fonctionnement
+
+Le bon fonctionnement de l’architecture a été validé via :
+
+1. **Tests unitaires de la Lambda**
+
+   * Invocation directe via AWS CLI
+   * Vérification des réponses JSON
+
+2. **Tests d’intégration via API Gateway**
+
+   * Requêtes HTTP avec `curl`
+   * Tests via navigateur (GET)
+
+3. **Validation côté infrastructure**
+
+   * Vérification de l’état de l’instance via :
+
+```bash
+aws ec2 describe-instances \
+--endpoint-url=http://localhost:4566
+```
+
+---
+
+Particularités techniques
+
+* L’API supporte deux modes d’appel :
+
+  * POST avec payload JSON (usage standard)
+  * GET avec paramètres d’URL (usage simplifié)
+
+* En environnement simulé (LocalStack) :
+
+  * aucune configuration de ports ou firewall n’est nécessaire
+  * le port 4566 centralise tous les services AWS
+
+* Des ajustements ont été nécessaires pour :
+
+  * gérer le mapping API Gateway (request/response)
+  * corriger les problèmes de réseau entre Lambda et LocalStack
+  * gérer correctement les formats de payload (body JSON)
+
+---
+
+Résultat
+
+L’architecture permet désormais de :
+
+* démarrer une instance EC2
+* arrêter une instance EC2
+* consulter son état
+
+le tout via une simple requête HTTP.
+
+---
+
 Difficultés rencontrées
 
 * Gestion du réseau entre Lambda et LocalStack (`localhost` vs container)

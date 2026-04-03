@@ -17,7 +17,7 @@ def lambda_handler(event, context):
 
     instance_id = os.environ.get("INSTANCE_ID")
 
-    # 🔥 gestion propre des cas
+    # Gestion du body
     try:
         if "body" in event:
             body = json.loads(event["body"])
@@ -40,7 +40,13 @@ def lambda_handler(event, context):
             ec2.stop_instances(InstanceIds=[instance_id])
             return {"status": "stopped"}
 
+        elif action == "status":
+            response = ec2.describe_instances(InstanceIds=[instance_id])
+            state = response["Reservations"][0]["Instances"][0]["State"]["Name"]
+            return {"status": state}
+
+        else:
+            return {"status": "unknown"}
+
     except Exception as e:
         return {"error": str(e)}
-
-    return {"status": "unknown"}
